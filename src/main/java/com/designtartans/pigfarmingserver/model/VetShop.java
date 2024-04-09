@@ -18,8 +18,6 @@ public class VetShop {
 
     private String email;
 
-    private String location;
-
     private String district;
 
     private String province;

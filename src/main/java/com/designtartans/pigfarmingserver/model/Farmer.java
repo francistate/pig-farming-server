@@ -14,11 +14,11 @@ public class Farmer {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "farm_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "farm_id", referencedColumnName = "id", nullable = true)
     private Farm farm;
 
     @OneToOne
-//    @MapsId
+    // @MapsId
     @JoinColumn(name = "user_id")
     private User user;
 }

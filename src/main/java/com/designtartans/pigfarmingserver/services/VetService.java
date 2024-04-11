@@ -1,5 +1,8 @@
 package com.designtartans.pigfarmingserver.services;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,7 @@ import com.designtartans.pigfarmingserver.model.User;
 import com.designtartans.pigfarmingserver.model.Vet;
 import com.designtartans.pigfarmingserver.model.VetShop;
 import com.designtartans.pigfarmingserver.repository.VetRepository;
+import com.designtartans.pigfarmingserver.utils.JwtService;
 
 @Service
 public class VetService implements VetServiceInterface {
@@ -26,6 +30,9 @@ public class VetService implements VetServiceInterface {
     @Autowired
     private VetShopServiceInterface vetShopService;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Override
     public BodyResponse createVet(VetDto vetDto) throws PhoneNumberAlreadyExistException, InvalidShopIdException {
 
@@ -33,16 +40,27 @@ public class VetService implements VetServiceInterface {
         if (vetShop != null) {
             Vet vet = new Vet();
             User user = userService
-                    .createUser(UserDto.builder().firstName(vetDto.getFirstName()).lastName(vetDto.getLastName())
+                    .createUser(UserDto.builder().firstName(vetDto.getFirstname()).lastName(vetDto.getLastname())
                             .phoneNumber(vetDto.getPhoneNumber()).password(vetDto.getPassword()).role("VET").build());
 
             vet.setUser(user);
             vet.setVetShop(vetShop);
             vetRepository.save(vet);
 
+            String jwt = jwtService.generateToken(user);
+
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("vetID", vet.getId());
+            responseBody.put("userID", user.getUserId());
+            responseBody.put("token", jwt);
+            responseBody.put("firstname", user.getFirstName());
+            responseBody.put("lastname", user.getLastName());
+            responseBody.put("phoneNumber", user.getPhoneNumber());
+            responseBody.put("role", user.getRole());
+
             BodyResponse response = new BodyResponse();
             response.setProcessed(true);
-            response.setResult(vet);
+            response.setResult(responseBody);
             response.setStatusCode(HttpStatus.CREATED);
             return response;
         } else {

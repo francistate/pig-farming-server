@@ -11,7 +11,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "pig")
-public class Pig{
+public class Pig {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,5 +28,7 @@ public class Pig{
     private Date dateAdded;
 
     private Double latestWeight;
+
+    private PigStatus pigStatus;
 
 }

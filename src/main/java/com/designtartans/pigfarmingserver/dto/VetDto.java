@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VetDto {
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
     private String phoneNumber;
     private String password;
     private int vet_shop_id;

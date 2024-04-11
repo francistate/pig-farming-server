@@ -1,6 +1,7 @@
 package com.designtartans.pigfarmingserver.advice;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -81,6 +82,16 @@ public class ApiExceptionHandler {
     public BodyResponse handleInvalidShopIdException(InvalidShopIdException ex) {
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.BAD_REQUEST);
+        response.setProcessed(false);
+        response.setResult(ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException.class)
+    public BodyResponse handleAccessDeniedException(AccessDeniedException ex) {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.FORBIDDEN);
         response.setProcessed(false);
         response.setResult(ex.getMessage());
         return response;

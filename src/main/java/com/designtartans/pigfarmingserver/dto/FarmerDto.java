@@ -12,5 +12,4 @@ public class FarmerDto {
     private String lastName;
     private String phoneNumber;
     private String password;
-
 }

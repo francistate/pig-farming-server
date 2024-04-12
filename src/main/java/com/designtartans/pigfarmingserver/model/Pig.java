@@ -3,7 +3,6 @@ package com.designtartans.pigfarmingserver.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -20,8 +19,6 @@ public class Pig {
 
     private String gender;
 
-    private String breed;
-
     private Long parentId;
 
     private LocalDate dateOfBirth;
@@ -33,13 +30,5 @@ public class Pig {
     private Double latestWeight;
 
     private PigStatus pigStatus;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @UpdateTimestamp
-    private Date lastPigStatusUpdate;
-
-    @ManyToOne
-    @JoinColumn(name = "farm_id")
-    private Farm farm;
 
 }

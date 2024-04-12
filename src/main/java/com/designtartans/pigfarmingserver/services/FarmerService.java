@@ -34,6 +34,7 @@ public class FarmerService implements FarmerServiceInterface {
         User user = userService.createUser(
                 new UserDto(farmerDto.getFirstName(), farmerDto.getLastName(), farmerDto.getPhoneNumber(),
                         farmerDto.getPassword(), "FARMER"));
+        System.out.println(user.getFirstName());
 
         Farmer farmer = new Farmer();
         farmer.setUser(user);

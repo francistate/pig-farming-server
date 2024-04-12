@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FarmerDto {
-    private String firstName;
-    private String lastName;
-    private String phoneNumber;
-    private String password;
-
+public class PigWeightHistoryDto {
+    private Long id;
+    private Long pigId;
+    private Double weight;
 }

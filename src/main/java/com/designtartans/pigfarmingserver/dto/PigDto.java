@@ -15,7 +15,7 @@ public class PigDto {
     private String gender;
     private String breed;
     private Long parentId;
-    private LocalDate dateOfBirth;
+    private Date dateOfBirth;
     private Date dateAdded;
     private Double latestWeight;
     private String pigStatus;

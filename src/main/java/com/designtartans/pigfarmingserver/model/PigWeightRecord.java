@@ -9,8 +9,8 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "pigweight")
-public class PigWeightHistory {
+@Table(name = "pig_weight_record")
+public class PigWeightRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -24,7 +24,8 @@ public class Pig {
 
     private Long parentId;
 
-    private LocalDate dateOfBirth;
+    @Temporal(TemporalType.DATE)
+    private Date dateOfBirth;
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp

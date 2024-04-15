@@ -23,6 +23,7 @@ public class Feed {
 
     private Double totalPrice;
 
+    @Temporal(TemporalType.DATE)
     private LocalDate dateAdded;
 
     @ManyToOne

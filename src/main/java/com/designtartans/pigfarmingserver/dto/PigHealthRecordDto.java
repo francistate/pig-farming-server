@@ -4,11 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class PigWeightHistoryDto {
+@NoArgsConstructor
+public class PigHealthRecordDto {
+
+
     private Long id;
+
     private Long pigId;
-    private Double weight;
+
+    private Long vetId;
+
+    private String description;
+
+    private String treatment;
+
+    private Date date;
 }

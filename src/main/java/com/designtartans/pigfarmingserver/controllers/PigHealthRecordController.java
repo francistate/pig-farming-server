@@ -1,9 +1,7 @@
 package com.designtartans.pigfarmingserver.controllers;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
-import com.designtartans.pigfarmingserver.dto.PigDto;
 import com.designtartans.pigfarmingserver.dto.PigHealthRecordDto;
-import com.designtartans.pigfarmingserver.model.PigHealthRecord;
 import com.designtartans.pigfarmingserver.services.PigHealthRecordService;
 import com.designtartans.pigfarmingserver.services.PigHealthRecordServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;

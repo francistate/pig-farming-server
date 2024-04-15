@@ -25,7 +25,7 @@ public class PigWeightRecordController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAuthority('VET')")
+    @PreAuthorize("hasAuthority('FARMER')")
     ResponseEntity<BodyResponse> createPigHealthRecord(@RequestBody PigWeightRecordDto pigWeightRecordDto) {
         return new ResponseEntity<>(pigWeightRecordService.createPigWeightRecord(pigWeightRecordDto), HttpStatus.CREATED);
     }

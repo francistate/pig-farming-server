@@ -3,19 +3,24 @@ package com.designtartans.pigfarmingserver.services;
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.PigHealthRecordDto;
 import com.designtartans.pigfarmingserver.model.PigHealthRecord;
+import com.designtartans.pigfarmingserver.model.Vet;
 import com.designtartans.pigfarmingserver.repository.PigHealthRecordRepository;
 import com.designtartans.pigfarmingserver.repository.PigRepository;
 import com.designtartans.pigfarmingserver.repository.VetRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class PigHealthRecordService implements PigHealthRecordServiceInterface{
 
+    @Autowired
     private PigRepository pigRepository;
-
+    @Autowired
     private VetRepository vetRepository;
-
+    @Autowired
     private PigHealthRecordRepository pigHealthRecordRepository;
 
     @Override
@@ -61,7 +66,11 @@ public class PigHealthRecordService implements PigHealthRecordServiceInterface{
     }
 
     private boolean vetExists(long id) {
-        return vetRepository.existsById(id);
+        Optional<Vet> vet = vetRepository.findById(id);
+        if (vet.isPresent()) {
+            return true;
+        }
+        return false;
     }
 
 }

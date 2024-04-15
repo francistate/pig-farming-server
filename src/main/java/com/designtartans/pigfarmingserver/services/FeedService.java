@@ -5,13 +5,15 @@ import com.designtartans.pigfarmingserver.dto.FeedDto;
 import com.designtartans.pigfarmingserver.model.Feed;
 import com.designtartans.pigfarmingserver.repository.FarmRepository;
 import com.designtartans.pigfarmingserver.repository.FeedRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FeedService implements  FeedServiceInterface{
-
+    @Autowired
     private FeedRepository feedRepository;
+    @Autowired
     private FarmRepository farmRepository;
 
     public BodyResponse createFeed(FeedDto feedDto) {
@@ -43,7 +45,6 @@ public class FeedService implements  FeedServiceInterface{
         return response;
 
     }
-
 
     //check if farm exists
     private boolean farmExists(long id) {

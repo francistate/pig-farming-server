@@ -2,6 +2,7 @@ package com.designtartans.pigfarmingserver.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 
@@ -24,6 +25,7 @@ public class Feed {
     private Double totalPrice;
 
     @Temporal(TemporalType.DATE)
+    @CreationTimestamp
     private LocalDate dateAdded;
 
     @ManyToOne

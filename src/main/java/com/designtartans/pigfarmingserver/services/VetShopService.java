@@ -1,7 +1,9 @@
 package com.designtartans.pigfarmingserver.services;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,20 @@ public class VetShopService implements VetShopServiceInterface {
     }
 
     @Override
+    public BodyResponse findAllShops() {
+        val vetShops =  vetShopRepository.findAll();
+        if (vetShops.isEmpty()) {
+            return new BodyResponse(HttpStatus.NOT_FOUND, "No Vet Shops found", false );
+        }
+
+        BodyResponse response = new BodyResponse();
+        response.setProcessed(true);
+        response.setStatusCode(HttpStatus.OK);
+        response.setResult(vetShops);
+        return response;
+    }
+
+    @Override
     public VetShop findShopById(long id) {
         Optional<VetShop> vetShop = vetShopRepository.findById(id);
         if (vetShop.isEmpty()) {
@@ -54,5 +70,7 @@ public class VetShopService implements VetShopServiceInterface {
             return vetShop.get();
         }
     }
+
+
 
 }

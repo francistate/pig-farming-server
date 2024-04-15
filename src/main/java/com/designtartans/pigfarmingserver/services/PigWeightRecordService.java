@@ -35,6 +35,7 @@ public class PigWeightRecordService implements PigWeightRecordServiceInterface {
         pigWeightRecord.setWeight(pigWeightRecordDto.getWeight());
         pigWeightRecordRepository.save(pigWeightRecord);
 
+
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.CREATED);
         response.setProcessed(true);

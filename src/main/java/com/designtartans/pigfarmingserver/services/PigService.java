@@ -57,6 +57,28 @@ public class PigService implements PigServiceInterface{
         return response;
     }
 
+    public BodyResponse updatePigStatus(Long id, PigDto pigDto){
+        if (!pigExists(id)) {
+            BodyResponse response = new BodyResponse();
+            response.setStatusCode(HttpStatus.NOT_FOUND);
+            response.setProcessed(false);
+            response.setResult("Pig not found");
+            return response;
+        }
+        Pig pig = pigRepository.findById(id).get();
+        if (pigDto.getPigStatus() != null && (pig.getPigStatus() != PigStatus.valueOf(pigDto.getPigStatus()))) {
+            pig.setPigStatus(PigStatus.valueOf(pigDto.getPigStatus()));
+        }
+        pigRepository.save(pig);
+
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.OK);
+        response.setProcessed(true);
+        response.setResult(pig);
+
+        return response;
+    }
+
    //check if farm exists
     private boolean farmExists(long id) {
         return farmRepository.existsById(id);

@@ -2,7 +2,6 @@ package com.designtartans.pigfarmingserver.controllers;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.PigHealthRecordDto;
-import com.designtartans.pigfarmingserver.services.PigHealthRecordService;
 import com.designtartans.pigfarmingserver.services.PigHealthRecordServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,8 +19,8 @@ public class PigHealthRecordController {
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('VET')")
     ResponseEntity<BodyResponse> createPigHealthRecord(@RequestBody PigHealthRecordDto pigHealthRecordDto) {
-        return new ResponseEntity<>(pigHealthRecordService.createPigHealthRecord(pigHealthRecordDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(pigHealthRecordService.createPigHealthRecord(pigHealthRecordDto),
+                HttpStatus.CREATED);
     }
-
 
 }

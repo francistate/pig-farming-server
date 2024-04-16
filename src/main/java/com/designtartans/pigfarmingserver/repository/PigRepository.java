@@ -5,8 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PigRepository extends JpaRepository<Pig, Long> {
     List<Pig> findByFarmId(Long farmId);
+
+    Optional<Pig> findByTag(String tag);
 }

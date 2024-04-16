@@ -2,17 +2,22 @@ package com.designtartans.pigfarmingserver.services;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.PigDto;
+import com.designtartans.pigfarmingserver.exceptions.FarmNotFoundException;
+import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
 import com.designtartans.pigfarmingserver.model.Farm;
 import com.designtartans.pigfarmingserver.model.Pig;
 import com.designtartans.pigfarmingserver.model.PigStatus;
 import com.designtartans.pigfarmingserver.repository.FarmRepository;
+
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import com.designtartans.pigfarmingserver.repository.PigRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PigService implements PigServiceInterface{
+public class PigService implements PigServiceInterface {
 
     @Autowired
     private PigRepository pigRepository;
@@ -21,23 +26,17 @@ public class PigService implements PigServiceInterface{
     private FarmRepository farmRepository;
 
     @Override
-    public BodyResponse createPig(PigDto pigDto) {
+    public BodyResponse createPig(PigDto pigDto) throws PigNotFoundException, FarmNotFoundException {
 
-        if (!farmExists(pigDto.getFarmId()) ) {
-            BodyResponse response = new BodyResponse();
-            response.setStatusCode(HttpStatus.NOT_FOUND);
-            response.setProcessed(false);
-            response.setResult("Farm not found");
-            return response;
-        }
-        if (!pigExists(pigDto.getParentId())) {
-            BodyResponse response = new BodyResponse();
-            response.setStatusCode(HttpStatus.NOT_FOUND);
-            response.setProcessed(false);
-            response.setResult("Parent pig not found");
-            return response;
+        if (!farmExists(pigDto.getFarmId())) {
+            throw new FarmNotFoundException("Farm not found");
         }
 
+        if (pigDto.getParentId() != null) {
+            if (!pigExists(pigDto.getParentId())) {
+                throw new PigNotFoundException("Parent pig not found");
+            }
+        }
         Farm farm = farmRepository.findById(pigDto.getFarmId()).get();
 
         Pig pig = new Pig();
@@ -46,8 +45,9 @@ public class PigService implements PigServiceInterface{
         pig.setBreed(pigDto.getBreed());
         pig.setParentId(pigDto.getParentId());
         pig.setDateOfBirth(pigDto.getDateOfBirth());
-        pig.setPigStatus(PigStatus.valueOf(pigDto.getPigStatus()));
+        pig.setPigStatus(PigStatus.ACTIVE);
         pig.setFarm(farm);
+        pig.setTag(generateTag());
         pigRepository.save(pig);
 
         BodyResponse response = new BodyResponse();
@@ -58,15 +58,10 @@ public class PigService implements PigServiceInterface{
     }
 
     @Override
-    public BodyResponse getPigsByFarm(Long farmId) {
+    public BodyResponse getPigsByFarm(Long farmId) throws FarmNotFoundException {
         if (!farmExists(farmId)) {
-            BodyResponse response = new BodyResponse();
-            response.setStatusCode(HttpStatus.NOT_FOUND);
-            response.setProcessed(false);
-            response.setResult("Farm not found");
-            return response;
+            throw new FarmNotFoundException("Farm not found");
         }
-
 
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.OK);
@@ -75,25 +70,16 @@ public class PigService implements PigServiceInterface{
         return response;
     }
 
-
-    public BodyResponse updatePig(long pigId, PigDto pigDto) {
+    public BodyResponse updatePig(long pigId, PigDto pigDto) throws PigNotFoundException {
         // Check if the pig exists
         if (!pigExists(pigId)) {
-            BodyResponse response = new BodyResponse();
-            response.setStatusCode(HttpStatus.NOT_FOUND);
-            response.setProcessed(false);
-            response.setResult("Pig not found");
-            return response;
+            throw new PigNotFoundException("Pig not found");
         }
 
         // Retrieve the existing pig from the database
         Pig existingPig = pigRepository.findById(pigId).orElse(null);
         if (existingPig == null) {
-            BodyResponse response = new BodyResponse();
-            response.setStatusCode(HttpStatus.NOT_FOUND);
-            response.setProcessed(false);
-            response.setResult("Pig not found");
-            return response;
+            throw new PigNotFoundException("Pig not found");
         }
 
         // Update the pig's properties with the non-null values from the DTO
@@ -109,9 +95,6 @@ public class PigService implements PigServiceInterface{
         if (pigDto.getDateOfBirth() != null) {
             existingPig.setDateOfBirth(pigDto.getDateOfBirth());
         }
-        if (pigDto.getPigStatus() != null) {
-            existingPig.setPigStatus(PigStatus.valueOf(pigDto.getPigStatus()));
-        }
 
         // Save the updated pig to the database
         pigRepository.save(existingPig);
@@ -126,13 +109,13 @@ public class PigService implements PigServiceInterface{
 
     BodyResponse getPigById(long pigId) {
         // Check if the pig exists
-//        if (!pigExists(pigId)) {
-//            BodyResponse response = new BodyResponse();
-//            response.setStatusCode(HttpStatus.NOT_FOUND);
-//            response.setProcessed(false);
-//            response.setResult("Pig not found");
-//            return response;
-//        }
+        // if (!pigExists(pigId)) {
+        // BodyResponse response = new BodyResponse();
+        // response.setStatusCode(HttpStatus.NOT_FOUND);
+        // response.setProcessed(false);
+        // response.setResult("Pig not found");
+        // return response;
+        // }
 
         // Retrieve the pig from the database
         Pig pig = pigRepository.findById(pigId).orElse(null);
@@ -152,8 +135,7 @@ public class PigService implements PigServiceInterface{
         return response;
     }
 
-
-    //check if farm exists
+    // check if farm exists
     private boolean farmExists(long id) {
         return farmRepository.existsById(id);
     }
@@ -161,5 +143,29 @@ public class PigService implements PigServiceInterface{
     // check if pig exists
     private boolean pigExists(long id) {
         return pigRepository.existsById(id);
+    }
+
+    private String generateTag() {
+        String tagName = "";
+        // generate random string
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 5;
+        Random random = new Random();
+        StringBuilder buffer = new StringBuilder(targetStringLength);
+        for (int i = 0; i < targetStringLength; i++) {
+            int randomLimitedInt = leftLimit + (int) (random.nextFloat() * (rightLimit - leftLimit + 1));
+            buffer.append((char) randomLimitedInt);
+        }
+        String generatedString = buffer.toString();
+
+        tagName = "P-" + generatedString.toUpperCase();
+
+        if (pigRepository.findByTag(tagName).isEmpty()) {
+
+            return tagName;
+        } else {
+            return generateTag();
+        }
     }
 }

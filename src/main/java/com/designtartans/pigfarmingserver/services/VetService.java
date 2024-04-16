@@ -40,7 +40,7 @@ public class VetService implements VetServiceInterface {
         if (vetShop != null) {
             Vet vet = new Vet();
             User user = userService
-                    .createUser(UserDto.builder().firstName(vetDto.getFirstname()).lastName(vetDto.getLastname())
+                    .createUser(UserDto.builder().firstname(vetDto.getFirstname()).lastname(vetDto.getLastname())
                             .phoneNumber(vetDto.getPhoneNumber()).password(vetDto.getPassword()).role("VET").build());
 
             vet.setUser(user);

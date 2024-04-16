@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.exceptions.ExistingVetShopNameException;
+import com.designtartans.pigfarmingserver.exceptions.FarmNotFoundException;
 import com.designtartans.pigfarmingserver.exceptions.InvalidShopIdException;
 import com.designtartans.pigfarmingserver.exceptions.InvalidTokenException;
 import com.designtartans.pigfarmingserver.exceptions.PhoneNumberAlreadyExistException;
+import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -92,6 +94,26 @@ public class ApiExceptionHandler {
     public BodyResponse handleAccessDeniedException(AccessDeniedException ex) {
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.FORBIDDEN);
+        response.setProcessed(false);
+        response.setResult(ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PigNotFoundException.class)
+    public BodyResponse handlePigNotFoundException(PigNotFoundException ex) {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.BAD_REQUEST);
+        response.setProcessed(false);
+        response.setResult(ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(FarmNotFoundException.class)
+    public BodyResponse handlePigNotFoundException(FarmNotFoundException ex) {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.BAD_REQUEST);
         response.setProcessed(false);
         response.setResult(ex.getMessage());
         return response;

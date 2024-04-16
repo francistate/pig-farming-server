@@ -15,8 +15,12 @@ import com.designtartans.pigfarmingserver.dto.AuthenticationRequest;
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.UserDto;
 import com.designtartans.pigfarmingserver.exceptions.PhoneNumberAlreadyExistException;
+import com.designtartans.pigfarmingserver.model.Farmer;
 import com.designtartans.pigfarmingserver.model.User;
+import com.designtartans.pigfarmingserver.model.Vet;
+import com.designtartans.pigfarmingserver.repository.FarmerRepository;
 import com.designtartans.pigfarmingserver.repository.UserRepository;
+import com.designtartans.pigfarmingserver.repository.VetRepository;
 import com.designtartans.pigfarmingserver.utils.JwtService;
 
 @Service
@@ -34,11 +38,17 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private FarmerRepository farmerRepository;
+
+    @Autowired
+    private VetRepository vetRepository;
+
     public User createUser(UserDto userDto) throws PhoneNumberAlreadyExistException {
         if (!isUserExistsByPhoneNumber(userDto.getPhoneNumber())) {
             User user = new User();
-            user.setFirstName(userDto.getFirstName());
-            user.setLastName(userDto.getLastName());
+            user.setFirstName(userDto.getFirstname());
+            user.setLastName(userDto.getLastname());
             user.setPhoneNumber(userDto.getPhoneNumber());
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
             user.setRole(userDto.getRole());
@@ -56,11 +66,24 @@ public class UserService {
         User user = userRepository.findByPhoneNumber(request.getPhoneNumber()).get();
         String jwt = jwtService.generateToken(user);
         Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("Token", jwt);
+        responseBody.put("token", jwt);
         responseBody.put("role", user.getRole());
         responseBody.put("firstname", user.getFirstName());
         responseBody.put("lastname", user.getLastName());
         responseBody.put("phoneNumber", user.getPhoneNumber());
+
+        if (user.getRole().equalsIgnoreCase("FARMER")) {
+            Farmer farmer = farmerRepository.findByUser(user).get();
+            if (farmer.getFarm() == null) {
+                responseBody.put("FarmID", null);
+            } else {
+                responseBody.put("FarmID", farmer.getFarm().getId());
+            }
+
+        } else if (user.getRole().equalsIgnoreCase("VET")) {
+            Vet vet = vetRepository.findByUser(user).get();
+            responseBody.put("vetShop", vet.getVetShop().getVetShopName());
+        }
 
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.OK);

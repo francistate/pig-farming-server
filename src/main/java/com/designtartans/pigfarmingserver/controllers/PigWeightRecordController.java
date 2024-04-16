@@ -1,9 +1,9 @@
 package com.designtartans.pigfarmingserver.controllers;
 
-
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 
 import com.designtartans.pigfarmingserver.dto.PigWeightRecordDto;
+import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
 import com.designtartans.pigfarmingserver.services.PigWeightRecordService;
 import com.designtartans.pigfarmingserver.services.PigWeightRecordServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,10 @@ public class PigWeightRecordController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('FARMER')")
-    ResponseEntity<BodyResponse> createPigHealthRecord(@RequestBody PigWeightRecordDto pigWeightRecordDto) {
-        return new ResponseEntity<>(pigWeightRecordService.createPigWeightRecord(pigWeightRecordDto), HttpStatus.CREATED);
+    ResponseEntity<BodyResponse> createPigHealthRecord(@RequestBody PigWeightRecordDto pigWeightRecordDto)
+            throws PigNotFoundException {
+        return new ResponseEntity<>(pigWeightRecordService.createPigWeightRecord(pigWeightRecordDto),
+                HttpStatus.CREATED);
     }
 
 }

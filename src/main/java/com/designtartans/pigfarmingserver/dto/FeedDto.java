@@ -1,16 +1,9 @@
 package com.designtartans.pigfarmingserver.dto;
 
-import com.designtartans.pigfarmingserver.model.Farm;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jdk.jfr.DataAmount;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -25,4 +18,3 @@ public class FeedDto {
     private Date dateAdded;
     private Long farmId;
 }
-

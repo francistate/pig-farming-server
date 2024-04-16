@@ -2,7 +2,8 @@ package com.designtartans.pigfarmingserver.controllers;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.PigDto;
-import com.designtartans.pigfarmingserver.services.PigService;
+import com.designtartans.pigfarmingserver.exceptions.FarmNotFoundException;
+import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
 import com.designtartans.pigfarmingserver.services.PigServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,14 +21,14 @@ public class PigController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('FARMER')")
-    public ResponseEntity<BodyResponse> createPig(@RequestBody PigDto pigDto) {
-        System.out.println("PigDto: " + pigDto);
+    public ResponseEntity<BodyResponse> createPig(@RequestBody PigDto pigDto)
+            throws PigNotFoundException, FarmNotFoundException {
         return new ResponseEntity<>(pigService.createPig(pigDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/farm/{farmId}")
     @PreAuthorize("hasAuthority('FARMER')")
-    public ResponseEntity<BodyResponse> getPigsByFarm(@PathVariable Long farmId) {
+    public ResponseEntity<BodyResponse> getPigsByFarm(@PathVariable Long farmId) throws FarmNotFoundException {
         return new ResponseEntity<>(pigService.getPigsByFarm(farmId), HttpStatus.OK);
     }
 }

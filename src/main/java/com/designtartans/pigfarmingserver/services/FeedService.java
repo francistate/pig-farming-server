@@ -2,6 +2,7 @@ package com.designtartans.pigfarmingserver.services;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.FeedDto;
+import com.designtartans.pigfarmingserver.exceptions.FarmNotFoundException;
 import com.designtartans.pigfarmingserver.model.Feed;
 import com.designtartans.pigfarmingserver.repository.FarmRepository;
 import com.designtartans.pigfarmingserver.repository.FeedRepository;
@@ -10,20 +11,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FeedService implements  FeedServiceInterface{
+public class FeedService implements FeedServiceInterface {
     @Autowired
     private FeedRepository feedRepository;
     @Autowired
     private FarmRepository farmRepository;
 
-    public BodyResponse createFeed(FeedDto feedDto) {
+    public BodyResponse createFeed(FeedDto feedDto) throws FarmNotFoundException {
 
-        if(!farmExists(feedDto.getFarmId())) {
-            BodyResponse response = new BodyResponse();
-            response.setStatusCode(HttpStatus.NOT_FOUND);
-            response.setProcessed(false);
-            response.setResult("Farm not found");
-            return response;
+        if (!farmExists(feedDto.getFarmId())) {
+            throw new FarmNotFoundException("Farm not found");
         }
 
         Feed feed = new Feed();
@@ -46,7 +43,7 @@ public class FeedService implements  FeedServiceInterface{
 
     }
 
-    //check if farm exists
+    // check if farm exists
     private boolean farmExists(long id) {
         return farmRepository.existsById(id);
     }

@@ -32,7 +32,7 @@ public class FarmerService implements FarmerServiceInterface {
     public BodyResponse createFarmer(FarmerDto farmerDto) throws PhoneNumberAlreadyExistException {
 
         User user = userService.createUser(
-                new UserDto(farmerDto.getFirstName(), farmerDto.getLastName(), farmerDto.getPhoneNumber(),
+                new UserDto(farmerDto.getFirstname(), farmerDto.getLastname(), farmerDto.getPhoneNumber(),
                         farmerDto.getPassword(), "FARMER"));
         System.out.println(user.getFirstName());
 
@@ -51,6 +51,11 @@ public class FarmerService implements FarmerServiceInterface {
         responseBody.put("lastname", user.getLastName());
         responseBody.put("phoneNumber", user.getPhoneNumber());
         responseBody.put("role", user.getRole());
+        if (farmer.getFarm() == null) {
+            responseBody.put("farmID", null);
+        } else {
+            responseBody.put("farmID", farmer.getFarm().getId());
+        }
 
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.CREATED);

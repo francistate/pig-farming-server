@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -42,5 +41,7 @@ public class Pig {
     @ManyToOne
     @JoinColumn(name = "farm_id")
     private Farm farm;
+
+    private String tag;
 
 }

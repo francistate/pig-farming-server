@@ -57,29 +57,103 @@ public class PigService implements PigServiceInterface{
         return response;
     }
 
-    public BodyResponse updatePigStatus(Long id, PigDto pigDto){
-        if (!pigExists(id)) {
+    @Override
+    public BodyResponse getPigsByFarm(Long farmId) {
+        if (!farmExists(farmId)) {
+            BodyResponse response = new BodyResponse();
+            response.setStatusCode(HttpStatus.NOT_FOUND);
+            response.setProcessed(false);
+            response.setResult("Farm not found");
+            return response;
+        }
+
+
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.OK);
+        response.setProcessed(true);
+        response.setResult(pigRepository.findByFarmId(farmId));
+        return response;
+    }
+
+
+    public BodyResponse updatePig(long pigId, PigDto pigDto) {
+        // Check if the pig exists
+        if (!pigExists(pigId)) {
             BodyResponse response = new BodyResponse();
             response.setStatusCode(HttpStatus.NOT_FOUND);
             response.setProcessed(false);
             response.setResult("Pig not found");
             return response;
         }
-        Pig pig = pigRepository.findById(id).get();
-        if (pigDto.getPigStatus() != null && (pig.getPigStatus() != PigStatus.valueOf(pigDto.getPigStatus()))) {
-            pig.setPigStatus(PigStatus.valueOf(pigDto.getPigStatus()));
-        }
-        pigRepository.save(pig);
 
+        // Retrieve the existing pig from the database
+        Pig existingPig = pigRepository.findById(pigId).orElse(null);
+        if (existingPig == null) {
+            BodyResponse response = new BodyResponse();
+            response.setStatusCode(HttpStatus.NOT_FOUND);
+            response.setProcessed(false);
+            response.setResult("Pig not found");
+            return response;
+        }
+
+        // Update the pig's properties with the non-null values from the DTO
+        if (pigDto.getLatestWeight() != null) {
+            existingPig.setLatestWeight(pigDto.getLatestWeight());
+        }
+        if (pigDto.getGender() != null) {
+            existingPig.setGender(pigDto.getGender());
+        }
+        if (pigDto.getBreed() != null) {
+            existingPig.setBreed(pigDto.getBreed());
+        }
+        if (pigDto.getDateOfBirth() != null) {
+            existingPig.setDateOfBirth(pigDto.getDateOfBirth());
+        }
+        if (pigDto.getPigStatus() != null) {
+            existingPig.setPigStatus(PigStatus.valueOf(pigDto.getPigStatus()));
+        }
+
+        // Save the updated pig to the database
+        pigRepository.save(existingPig);
+
+        // Prepare and return the response
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.OK);
+        response.setProcessed(true);
+        response.setResult(existingPig);
+        return response;
+    }
+
+    BodyResponse getPigById(long pigId) {
+        // Check if the pig exists
+//        if (!pigExists(pigId)) {
+//            BodyResponse response = new BodyResponse();
+//            response.setStatusCode(HttpStatus.NOT_FOUND);
+//            response.setProcessed(false);
+//            response.setResult("Pig not found");
+//            return response;
+//        }
+
+        // Retrieve the pig from the database
+        Pig pig = pigRepository.findById(pigId).orElse(null);
+        if (pig == null) {
+            BodyResponse response = new BodyResponse();
+            response.setStatusCode(HttpStatus.NOT_FOUND);
+            response.setProcessed(false);
+            response.setResult("Pig not found");
+            return response;
+        }
+
+        // Prepare and return the response
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.OK);
         response.setProcessed(true);
         response.setResult(pig);
-
         return response;
     }
 
-   //check if farm exists
+
+    //check if farm exists
     private boolean farmExists(long id) {
         return farmRepository.existsById(id);
     }

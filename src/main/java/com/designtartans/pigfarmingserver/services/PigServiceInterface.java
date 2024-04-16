@@ -5,4 +5,6 @@ import com.designtartans.pigfarmingserver.dto.PigDto;
 
 public interface PigServiceInterface {
     BodyResponse createPig(PigDto pigDto);
+
+    BodyResponse getPigsByFarm(Long farmId);
 }

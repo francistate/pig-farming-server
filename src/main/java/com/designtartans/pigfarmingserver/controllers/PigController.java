@@ -24,4 +24,10 @@ public class PigController {
         System.out.println("PigDto: " + pigDto);
         return new ResponseEntity<>(pigService.createPig(pigDto), HttpStatus.CREATED);
     }
+
+    @GetMapping("/farm/{farmId}")
+    @PreAuthorize("hasAuthority('FARMER')")
+    public ResponseEntity<BodyResponse> getPigsByFarm(@PathVariable Long farmId) {
+        return new ResponseEntity<>(pigService.getPigsByFarm(farmId), HttpStatus.OK);
+    }
 }

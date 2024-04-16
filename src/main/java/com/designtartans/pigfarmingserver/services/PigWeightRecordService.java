@@ -35,6 +35,11 @@ public class PigWeightRecordService implements PigWeightRecordServiceInterface {
         pigWeightRecord.setWeight(pigWeightRecordDto.getWeight());
         pigWeightRecordRepository.save(pigWeightRecord);
 
+        // Update the latest weight of the pig
+        pig.setLatestWeight(pigWeightRecordDto.getWeight());
+        pigRepository.save(pig);
+
+
 
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.CREATED);

@@ -4,6 +4,9 @@ import com.designtartans.pigfarmingserver.model.Pig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface PigRepository extends JpaRepository<Pig, Long> {
+    List<Pig> findByFarmId(Long farmId);
 }

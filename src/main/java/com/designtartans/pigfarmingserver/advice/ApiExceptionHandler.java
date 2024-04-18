@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.exceptions.ExistingVetShopNameException;
-import com.designtartans.pigfarmingserver.exceptions.ExpiredTokenException;
 import com.designtartans.pigfarmingserver.exceptions.FarmNotFoundException;
 import com.designtartans.pigfarmingserver.exceptions.InvalidShopIdException;
 import com.designtartans.pigfarmingserver.exceptions.InvalidTokenException;
@@ -121,8 +120,8 @@ public class ApiExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(ExpiredTokenException.class)
-    public BodyResponse handleExpiredTokenException(ExpiredTokenException ex) {
+    @ExceptionHandler(Exception.class)
+    public BodyResponse handleExpiredTokenException(Exception ex) {
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.BAD_REQUEST);
         response.setProcessed(false);

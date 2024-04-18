@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class FarmDto {
     private String province;
     private String district;
-    private Long farmerId;
 }

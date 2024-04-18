@@ -8,9 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
+import com.designtartans.pigfarmingserver.dto.FarmDto;
 import com.designtartans.pigfarmingserver.dto.FarmerDto;
 import com.designtartans.pigfarmingserver.dto.UserDto;
 import com.designtartans.pigfarmingserver.exceptions.PhoneNumberAlreadyExistException;
+import com.designtartans.pigfarmingserver.model.Farm;
 import com.designtartans.pigfarmingserver.model.Farmer;
 import com.designtartans.pigfarmingserver.model.User;
 import com.designtartans.pigfarmingserver.repository.FarmerRepository;
@@ -28,16 +30,21 @@ public class FarmerService implements FarmerServiceInterface {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private FarmService farmService;
+
     @Override
     public BodyResponse createFarmer(FarmerDto farmerDto) throws PhoneNumberAlreadyExistException {
 
         User user = userService.createUser(
                 new UserDto(farmerDto.getFirstname(), farmerDto.getLastname(), farmerDto.getPhoneNumber(),
                         farmerDto.getPassword(), "FARMER"));
-        System.out.println(user.getFirstName());
+
+        Farm farm = farmService.createFarm(new FarmDto(farmerDto.getProvince(), farmerDto.getDistrict()));
 
         Farmer farmer = new Farmer();
         farmer.setUser(user);
+        farmer.setFarm(farm);
 
         farmerRepository.save(farmer);
 
@@ -51,11 +58,7 @@ public class FarmerService implements FarmerServiceInterface {
         responseBody.put("lastname", user.getLastName());
         responseBody.put("phoneNumber", user.getPhoneNumber());
         responseBody.put("role", user.getRole());
-        if (farmer.getFarm() == null) {
-            responseBody.put("farmID", null);
-        } else {
-            responseBody.put("farmID", farmer.getFarm().getId());
-        }
+        responseBody.put("farmID", farmer.getFarm().getId());
 
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.CREATED);

@@ -7,4 +7,6 @@ import com.designtartans.pigfarmingserver.exceptions.FarmNotFoundException;
 public interface FeedServiceInterface {
 
     BodyResponse createFeed(FeedDto feedDto) throws FarmNotFoundException;
+
+    BodyResponse getFeedsByFarm(Long farmId) throws FarmNotFoundException;
 }

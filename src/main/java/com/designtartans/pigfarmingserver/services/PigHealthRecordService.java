@@ -2,6 +2,8 @@ package com.designtartans.pigfarmingserver.services;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.PigHealthRecordDto;
+import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
+import com.designtartans.pigfarmingserver.model.Pig;
 import com.designtartans.pigfarmingserver.model.PigHealthRecord;
 import com.designtartans.pigfarmingserver.model.Vet;
 import com.designtartans.pigfarmingserver.repository.PigHealthRecordRepository;
@@ -24,7 +26,7 @@ public class PigHealthRecordService implements PigHealthRecordServiceInterface{
     private PigHealthRecordRepository pigHealthRecordRepository;
 
     @Override
-    public BodyResponse createPigHealthRecord(PigHealthRecordDto pigHealthRecordDto) {
+    public BodyResponse createPigHealthRecord(PigHealthRecordDto pigHealthRecordDto)  {
         boolean vetExists = vetExists(pigHealthRecordDto.getVetId());
         boolean pigExists = pigExists(pigHealthRecordDto.getPigId());
 
@@ -59,10 +61,28 @@ public class PigHealthRecordService implements PigHealthRecordServiceInterface{
     }
 
 
+    public BodyResponse getPigHealthRecordsByTag(String tag) throws PigNotFoundException {
+        if (!pigExists(tag)) {
+            throw new PigNotFoundException("Pig Not found");
+        }
+
+        Pig pig = pigRepository.findByTag(tag).get();
+        BodyResponse response = new BodyResponse();
+        response.setProcessed(true);
+        response.setResult(pigHealthRecordRepository.findByPigId(pig.getId()));
+        response.setStatusCode(HttpStatus.OK);
+        return response;
+    }
+
+
 
     // check if pig exists
     private boolean pigExists(long id) {
         return pigRepository.existsById(id);
+    }
+
+    private boolean pigExists(String tag) {
+        return pigRepository.findByTag(tag).isPresent();
     }
 
     private boolean vetExists(long id) {

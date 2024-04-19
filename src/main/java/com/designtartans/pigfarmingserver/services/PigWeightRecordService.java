@@ -43,7 +43,30 @@ public class PigWeightRecordService implements PigWeightRecordServiceInterface {
         return response;
     }
 
-    // check if pig exists
+    public BodyResponse getPigWeightRecordsByTag(String tag) throws PigNotFoundException {
+        if (!pigExists(tag)) {
+            throw new PigNotFoundException("Pig Not found");
+        }
+
+        Pig pig = pigRepository.findByTag(tag).get();
+
+
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.OK);
+        response.setProcessed(true);
+        response.setResult(pigWeightRecordRepository.findByPigId(pig.getId()));
+
+        return response;
+    }
+
+
+
+    // check if pig exists by tag
+    private boolean pigExists(String tag){
+        return pigRepository.findByTag(tag).isPresent();
+    }
+
+    // check if pig exists by id
     private boolean pigExists(long id) {
         return pigRepository.existsById(id);
     }

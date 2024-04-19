@@ -43,6 +43,19 @@ public class FeedService implements FeedServiceInterface {
 
     }
 
+    @Override
+    public BodyResponse getFeedsByFarm(Long farmId) throws FarmNotFoundException {
+        if (!farmExists(farmId)) {
+            throw new FarmNotFoundException("Farm not found");
+        }
+
+        BodyResponse response = new BodyResponse();
+        response.setProcessed(true);
+        response.setStatusCode(HttpStatus.OK);
+        response.setResult(feedRepository.findByFarmId(farmId));
+        return response;
+    }
+
     // check if farm exists
     private boolean farmExists(long id) {
         return farmRepository.existsById(id);

@@ -20,9 +20,6 @@ public class PigWeightRecordController {
     @Autowired
     private PigWeightRecordServiceInterface pigWeightRecordService;
 
-    public PigWeightRecordController(PigWeightRecordService pigWeightRecordService) {
-        this.pigWeightRecordService = pigWeightRecordService;
-    }
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('FARMER')")
@@ -32,4 +29,9 @@ public class PigWeightRecordController {
                 HttpStatus.CREATED);
     }
 
+    @GetMapping("/pig/{tag}")
+    @PreAuthorize("hasAuthority('FARMER')")
+    ResponseEntity<BodyResponse> getPigWeightRecordsByTag(@PathVariable String tag) throws PigNotFoundException {
+        return new ResponseEntity<>(pigWeightRecordService.getPigWeightRecordsByTag(tag), HttpStatus.OK);
+    }
 }

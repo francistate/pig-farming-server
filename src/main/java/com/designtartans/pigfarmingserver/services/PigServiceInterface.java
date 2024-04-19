@@ -9,4 +9,8 @@ public interface PigServiceInterface {
     BodyResponse createPig(PigDto pigDto) throws PigNotFoundException, FarmNotFoundException;
 
     BodyResponse getPigsByFarm(Long farmId) throws FarmNotFoundException;
+
+    BodyResponse countAllActivePigs() ;
+
+    BodyResponse countActivePigsPerProvince() ;
 }

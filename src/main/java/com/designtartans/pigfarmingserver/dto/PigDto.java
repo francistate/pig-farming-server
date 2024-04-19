@@ -14,8 +14,7 @@ public class PigDto {
     private String breed;
     private Long parentId;
     private Date dateOfBirth;
-    private Date dateAdded;
     private Double latestWeight;
-    private Date lastPigStatusUpdate;
+    private String tag;
     private Long farmId;
 }

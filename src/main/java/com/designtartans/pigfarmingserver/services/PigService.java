@@ -107,15 +107,9 @@ public class PigService implements PigServiceInterface {
         return response;
     }
 
+
+
     BodyResponse getPigById(long pigId) {
-        // Check if the pig exists
-        // if (!pigExists(pigId)) {
-        // BodyResponse response = new BodyResponse();
-        // response.setStatusCode(HttpStatus.NOT_FOUND);
-        // response.setProcessed(false);
-        // response.setResult("Pig not found");
-        // return response;
-        // }
 
         // Retrieve the pig from the database
         Pig pig = pigRepository.findById(pigId).orElse(null);
@@ -132,6 +126,22 @@ public class PigService implements PigServiceInterface {
         response.setStatusCode(HttpStatus.OK);
         response.setProcessed(true);
         response.setResult(pig);
+        return response;
+    }
+
+    public BodyResponse countAllActivePigs() {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.OK);
+        response.setProcessed(true);
+        response.setResult(pigRepository.countAllActivePigs());
+        return response;
+    }
+
+    public BodyResponse countActivePigsPerProvince() {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.OK);
+        response.setProcessed(true);
+        response.setResult(pigRepository.countActivePigsPerProvince());
         return response;
     }
 

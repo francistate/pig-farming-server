@@ -24,4 +24,10 @@ public class FeedController {
         return new ResponseEntity<>(feedService.createFeed(feedDto), HttpStatus.CREATED);
     }
 
+    @GetMapping("/farm/{farmId}")
+    @PreAuthorize("hasAuthority('FARMER')")
+    public ResponseEntity<BodyResponse> getFeedsByFarm(@PathVariable Long farmId) throws FarmNotFoundException {
+        return new ResponseEntity<>(feedService.getFeedsByFarm(farmId), HttpStatus.OK);
+    }
+
 }

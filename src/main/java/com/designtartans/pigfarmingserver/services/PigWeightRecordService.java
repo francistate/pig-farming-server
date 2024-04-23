@@ -75,7 +75,7 @@ public class PigWeightRecordService implements PigWeightRecordServiceInterface {
         return bodyResponse;
     }
 
-    // check if pig exists
+
     private boolean pigExists(long id) {
         return pigRepository.existsById(id);
     }

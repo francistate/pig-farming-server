@@ -31,4 +31,17 @@ public class PigController {
     public ResponseEntity<BodyResponse> getPigsByFarm(@PathVariable Long farmId) throws FarmNotFoundException {
         return new ResponseEntity<>(pigService.getPigsByFarm(farmId), HttpStatus.OK);
     }
+
+    @GetMapping("/count/active")
+    @PreAuthorize("hasAuthority('FARMER')") // for minister
+    public ResponseEntity<BodyResponse> countAllActivePigs() {
+        return new ResponseEntity<>(pigService.countAllActivePigs(), HttpStatus.OK);
+    }
+
+    @GetMapping("/count/active_by_region")
+    @PreAuthorize("hasAuthority('FARMER')") // for minister
+    public ResponseEntity<BodyResponse> countActivePigsPerRegion() {
+        return new ResponseEntity<>(pigService.countActivePigsPerProvince(), HttpStatus.OK);
+    }
+
 }

@@ -8,5 +8,7 @@ import com.designtartans.pigfarmingserver.exceptions.TagNotFoundException;
 public interface PigWeightRecordServiceInterface {
     BodyResponse createPigWeightRecord(PigWeightRecordDto pigWeightRecordDto) throws PigNotFoundException;
 
+
     BodyResponse getPigWeightRecords(String tag) throws TagNotFoundException;
+
 }

@@ -7,12 +7,15 @@ import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
 import com.designtartans.pigfarmingserver.model.Farm;
 import com.designtartans.pigfarmingserver.model.Pig;
 import com.designtartans.pigfarmingserver.model.PigStatus;
+import com.designtartans.pigfarmingserver.model.PigWeightRecord;
 import com.designtartans.pigfarmingserver.repository.FarmRepository;
 
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.designtartans.pigfarmingserver.repository.PigRepository;
+import com.designtartans.pigfarmingserver.repository.PigWeightRecordRepository;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,9 @@ public class PigService implements PigServiceInterface {
 
     @Autowired
     private FarmRepository farmRepository;
+
+    @Autowired
+    private PigWeightRecordRepository pigWeightRecordRepository;
 
     @Override
     public BodyResponse createPig(PigDto pigDto) throws PigNotFoundException, FarmNotFoundException {
@@ -49,6 +55,12 @@ public class PigService implements PigServiceInterface {
         pig.setFarm(farm);
         pig.setTag(generateTag());
         pigRepository.save(pig);
+
+        PigWeightRecord record = new PigWeightRecord();
+        record.setPig(pig);
+        record.setWeight(pig.getLatestWeight());
+
+        pigWeightRecordRepository.save(record);
 
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.CREATED);

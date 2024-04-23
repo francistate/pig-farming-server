@@ -3,10 +3,17 @@ package com.designtartans.pigfarmingserver.services;
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.PigWeightRecordDto;
 import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
+import com.designtartans.pigfarmingserver.exceptions.TagNotFoundException;
 import com.designtartans.pigfarmingserver.model.Pig;
 import com.designtartans.pigfarmingserver.model.PigWeightRecord;
+import com.designtartans.pigfarmingserver.model.WeightResponseData;
 import com.designtartans.pigfarmingserver.repository.PigRepository;
 import com.designtartans.pigfarmingserver.repository.PigWeightRecordRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -43,30 +50,32 @@ public class PigWeightRecordService implements PigWeightRecordServiceInterface {
         return response;
     }
 
-    public BodyResponse getPigWeightRecordsByTag(String tag) throws PigNotFoundException {
-        if (!pigExists(tag)) {
-            throw new PigNotFoundException("Pig Not found");
+    @Override
+    public BodyResponse getPigWeightRecords(String tag) throws TagNotFoundException {
+        Optional<Pig> pig = pigRepository.findByTag(tag);
+        if (pig.isEmpty()) {
+            throw new TagNotFoundException("Tag is not present");
+
         }
+        List<PigWeightRecord> weightRecords = pigWeightRecordRepository.findByPig(pig.get());
 
-        Pig pig = pigRepository.findByTag(tag).get();
+        List<WeightResponseData> weightResponse = new ArrayList<>();
+        for (PigWeightRecord pigWeightRecord : weightRecords) {
+            WeightResponseData recordResponse = new WeightResponseData();
+            recordResponse.setDate(pigWeightRecord.getDateAdded().toString().split(" ")[0]);
+            recordResponse.setWeight(pigWeightRecord.getWeight());
 
+            weightResponse.add(recordResponse);
+        }
+        BodyResponse bodyResponse = new BodyResponse();
+        bodyResponse.setProcessed(true);
+        bodyResponse.setResult(weightResponse);
+        bodyResponse.setStatusCode(HttpStatus.OK);
 
-        BodyResponse response = new BodyResponse();
-        response.setStatusCode(HttpStatus.OK);
-        response.setProcessed(true);
-        response.setResult(pigWeightRecordRepository.findByPigId(pig.getId()));
-
-        return response;
+        return bodyResponse;
     }
 
 
-
-    // check if pig exists by tag
-    private boolean pigExists(String tag){
-        return pigRepository.findByTag(tag).isPresent();
-    }
-
-    // check if pig exists by id
     private boolean pigExists(long id) {
         return pigRepository.existsById(id);
     }

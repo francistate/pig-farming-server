@@ -15,6 +15,7 @@ import com.designtartans.pigfarmingserver.exceptions.InvalidShopIdException;
 import com.designtartans.pigfarmingserver.exceptions.InvalidTokenException;
 import com.designtartans.pigfarmingserver.exceptions.PhoneNumberAlreadyExistException;
 import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
+import com.designtartans.pigfarmingserver.exceptions.TagNotFoundException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -122,6 +123,16 @@ public class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(Exception.class)
     public BodyResponse handleExpiredTokenException(Exception ex) {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.BAD_REQUEST);
+        response.setProcessed(false);
+        response.setResult(ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TagNotFoundException.class)
+    public BodyResponse handleTagNotFoundException(TagNotFoundException ex) {
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.BAD_REQUEST);
         response.setProcessed(false);

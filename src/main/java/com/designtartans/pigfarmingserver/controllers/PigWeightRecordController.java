@@ -5,7 +5,6 @@ import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.PigWeightRecordDto;
 import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
 import com.designtartans.pigfarmingserver.exceptions.TagNotFoundException;
-import com.designtartans.pigfarmingserver.services.PigWeightRecordService;
 import com.designtartans.pigfarmingserver.services.PigWeightRecordServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +21,6 @@ public class PigWeightRecordController {
     @Autowired
     private PigWeightRecordServiceInterface pigWeightRecordService;
 
-
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('FARMER')")
     ResponseEntity<BodyResponse> createPigHealthRecord(@RequestBody PigWeightRecordDto pigWeightRecordDto)
@@ -31,7 +29,7 @@ public class PigWeightRecordController {
                 HttpStatus.CREATED);
     }
 
-    @GetMapping("/{tag}")
+    @GetMapping("/pig/{tag}")
     public ResponseEntity<BodyResponse> getPigHealthRecord(@PathVariable String tag) throws TagNotFoundException {
         return new ResponseEntity<>(pigWeightRecordService.getPigWeightRecords(tag), HttpStatus.OK);
     }

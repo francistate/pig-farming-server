@@ -13,9 +13,13 @@ import com.designtartans.pigfarmingserver.exceptions.ExistingVetShopNameExceptio
 import com.designtartans.pigfarmingserver.exceptions.FarmNotFoundException;
 import com.designtartans.pigfarmingserver.exceptions.InvalidShopIdException;
 import com.designtartans.pigfarmingserver.exceptions.InvalidTokenException;
+import com.designtartans.pigfarmingserver.exceptions.NoTokenProvidedException;
 import com.designtartans.pigfarmingserver.exceptions.PhoneNumberAlreadyExistException;
 import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
 import com.designtartans.pigfarmingserver.exceptions.TagNotFoundException;
+
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -121,10 +125,20 @@ public class ApiExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(Exception.class)
-    public BodyResponse handleExpiredTokenException(Exception ex) {
+    @ExceptionHandler(SignatureException.class)
+    public BodyResponse handleSignatureException(SignatureException ex) {
         BodyResponse response = new BodyResponse();
-        response.setStatusCode(HttpStatus.BAD_REQUEST);
+        response.setStatusCode(HttpStatus.FORBIDDEN);
+        response.setProcessed(false);
+        response.setResult(ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(ExpiredJwtException.class)
+    public BodyResponse handleExpiredTokenException(ExpiredJwtException ex) {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.FORBIDDEN);
         response.setProcessed(false);
         response.setResult(ex.getMessage());
         return response;
@@ -135,6 +149,16 @@ public class ApiExceptionHandler {
     public BodyResponse handleTagNotFoundException(TagNotFoundException ex) {
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.BAD_REQUEST);
+        response.setProcessed(false);
+        response.setResult(ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(NoTokenProvidedException.class)
+    public BodyResponse handleNoTokenProvidedException(NoTokenProvidedException ex) {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
         response.setProcessed(false);
         response.setResult(ex.getMessage());
         return response;

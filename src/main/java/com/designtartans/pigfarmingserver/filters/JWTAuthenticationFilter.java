@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import com.designtartans.pigfarmingserver.exceptions.NoTokenProvidedException;
 import com.designtartans.pigfarmingserver.utils.JwtService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -41,35 +42,46 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String authHeader = request.getHeader("Authorization");
 
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (isInsecureEndpoint(request)) {
                 filterChain.doFilter(request, response);
-                return;
-            }
-
-            final String jwt = authHeader.substring(7);
-
-            final String userPhoneNumber = jwtService.extractUsername(jwt);
-            if (userPhoneNumber != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userPhoneNumber);
-
-                if (jwtService.isTokenValid(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            } else {
+                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                    throw new NoTokenProvidedException("No Bearer token provided");
                 }
 
+                final String jwt = authHeader.substring(7);
+
+                final String userPhoneNumber = jwtService.extractUsername(jwt);
+                if (userPhoneNumber != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(userPhoneNumber);
+
+                    if (jwtService.isTokenValid(jwt, userDetails)) {
+                        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
+
+                        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    }
+
+                }
+
+                filterChain.doFilter(request, response);
             }
 
-            filterChain.doFilter(request, response);
         } catch (ExpiredJwtException ex) {
             handlerExceptionResolver.resolveException(request, response, null, ex);
         } catch (SignatureException ex) {
             handlerExceptionResolver.resolveException(request, response, null, ex);
+        } catch (NoTokenProvidedException e) {
+            handlerExceptionResolver.resolveException(request, response, null, e);
         }
 
+    }
+
+    private boolean isInsecureEndpoint(HttpServletRequest req) {
+        String requestString = req.getRequestURI();
+        return (requestString.startsWith("/api/v1/auth/") || requestString.startsWith("/api/v1/shop/"));
     }
 
 }

@@ -82,6 +82,7 @@ public class UserService {
 
         } else if (user.getRole().equalsIgnoreCase("VET")) {
             Vet vet = vetRepository.findByUser(user).get();
+            responseBody.put("vetID", vet.getId());
             responseBody.put("vetShop", vet.getVetShop().getVetShopName());
         }
 

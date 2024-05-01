@@ -2,7 +2,9 @@ package com.designtartans.pigfarmingserver.services;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.PigHealthRecordDto;
+import com.designtartans.pigfarmingserver.dto.PigHealthRecordReturnDto;
 import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
+import com.designtartans.pigfarmingserver.exceptions.VetNotFoundException;
 import com.designtartans.pigfarmingserver.model.Pig;
 import com.designtartans.pigfarmingserver.model.PigHealthRecord;
 import com.designtartans.pigfarmingserver.model.Vet;
@@ -13,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PigHealthRecordService implements PigHealthRecordServiceInterface{
@@ -72,8 +76,50 @@ public class PigHealthRecordService implements PigHealthRecordServiceInterface{
         response.setResult(pigHealthRecordRepository.findByPigId(pig.getId()));
         response.setStatusCode(HttpStatus.OK);
         return response;
+
     }
 
+
+    public BodyResponse getPigHealthRecordsByVet(Long vetId) throws VetNotFoundException{
+        Vet vet = vetRepository.findById(vetId).orElse(null);
+        if (vet == null) {
+            throw new VetNotFoundException("Vet not found");
+        }
+
+//
+//        BodyResponse response = new BodyResponse();
+//        response.setProcessed(true);
+//        response.setResult(pigHealthRecordRepository.findByVetId(vet.getId()));
+//        response.setStatusCode(HttpStatus.OK);
+//        return response;
+
+        List<PigHealthRecord> pigHealthRecords = pigHealthRecordRepository.findByVetId(vet.getId());
+        List<PigHealthRecordReturnDto> pigHealthRecordDtos = mapToPigHealthRecordReturnDtos(pigHealthRecords);
+
+        BodyResponse response = new BodyResponse();
+        response.setProcessed(true);
+        response.setResult(pigHealthRecordDtos);
+        response.setStatusCode(HttpStatus.OK);
+        return response;
+    }
+
+    private List<PigHealthRecordReturnDto> mapToPigHealthRecordReturnDtos(List<PigHealthRecord> pigHealthRecords) {
+        return pigHealthRecords.stream()
+                .map(this::convertToPigHealthRecordDto)
+                .collect(Collectors.toList());
+    }
+
+    private PigHealthRecordReturnDto convertToPigHealthRecordDto(PigHealthRecord pigHealthRecord) {
+        PigHealthRecordReturnDto pigHealthRecordReturnDto = new PigHealthRecordReturnDto();
+        pigHealthRecordReturnDto.setId(pigHealthRecord.getId());
+        pigHealthRecordReturnDto.setPig(pigHealthRecord.getPig());
+        pigHealthRecordReturnDto.setVetId(pigHealthRecord.getVet().getId());
+        pigHealthRecordReturnDto.setDescription(pigHealthRecord.getDescription());
+        pigHealthRecordReturnDto.setTreatment(pigHealthRecord.getTreatment());
+        pigHealthRecordReturnDto.setDate(pigHealthRecord.getDate());
+        return pigHealthRecordReturnDto;
+
+    }
 
 
     // check if pig exists

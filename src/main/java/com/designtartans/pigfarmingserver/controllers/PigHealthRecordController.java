@@ -3,6 +3,7 @@ package com.designtartans.pigfarmingserver.controllers;
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.PigHealthRecordDto;
 import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
+import com.designtartans.pigfarmingserver.exceptions.VetNotFoundException;
 import com.designtartans.pigfarmingserver.services.PigHealthRecordServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,9 +26,15 @@ public class PigHealthRecordController {
     }
 
     @GetMapping("/pig/{tag}")
-    @PreAuthorize("hasAuthority('FARMER')|| hasAuthority('VET')")
+    @PreAuthorize("hasAuthority('FARMER') || hasAuthority('VET')")
     ResponseEntity<BodyResponse> getPigHealthRecordsByTag(@PathVariable String tag) throws PigNotFoundException {
         return new ResponseEntity<>(pigHealthRecordService.getPigHealthRecordsByTag(tag), HttpStatus.OK);
+    }
+
+    @GetMapping("vet")
+    @PreAuthorize("hasAuthority('VET')")
+    ResponseEntity<BodyResponse> getPigHealthRecordsByVet(@RequestParam String id) throws VetNotFoundException {
+        return new ResponseEntity<>(pigHealthRecordService.getPigHealthRecordsByVet(Long.parseLong(id)), HttpStatus.OK);
     }
 
 }

@@ -10,8 +10,9 @@ import com.designtartans.pigfarmingserver.model.PigStatus;
 import com.designtartans.pigfarmingserver.model.PigWeightRecord;
 import com.designtartans.pigfarmingserver.repository.FarmRepository;
 
-import java.util.Random;
+import java.util.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.designtartans.pigfarmingserver.repository.PigRepository;
 import com.designtartans.pigfarmingserver.repository.PigWeightRecordRepository;
@@ -121,16 +122,12 @@ public class PigService implements PigServiceInterface {
 
 
 
-    BodyResponse getPigById(long pigId) {
+    BodyResponse getPigById(long pigId) throws PigNotFoundException {
 
         // Retrieve the pig from the database
         Pig pig = pigRepository.findById(pigId).orElse(null);
         if (pig == null) {
-            BodyResponse response = new BodyResponse();
-            response.setStatusCode(HttpStatus.NOT_FOUND);
-            response.setProcessed(false);
-            response.setResult("Pig not found");
-            return response;
+            throw new PigNotFoundException("Pig not found");
         }
 
         // Prepare and return the response
@@ -140,6 +137,38 @@ public class PigService implements PigServiceInterface {
         response.setResult(pig);
         return response;
     }
+
+    public BodyResponse getPigByTag(String tag) throws PigNotFoundException {
+
+        Pig pig = pigRepository.findByTag(tag).orElse(null);
+        if (pig == null) {
+            throw new PigNotFoundException("Pig not found");
+        }
+
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.OK);
+        response.setProcessed(true);
+        response.setResult(pigRepository.findByTag(tag));
+        return response;
+    }
+
+    public BodyResponse getPigGenderCountForFarm(Long farmId) throws FarmNotFoundException {
+
+        Farm farm = farmRepository.findById(farmId).orElse(null);
+        if (farm == null) {
+            throw new FarmNotFoundException("Farm not found");
+        }
+
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.OK);
+        response.setProcessed(true);
+//        List<Map<String, Integer>> result = pigRepository.countPigsByGenderForAFarm(farmId);
+//        System.out.println(result.toString());
+        response.setResult(parseGenderCount(pigRepository.countPigsByGenderForAFarm(farmId)));
+        return response;
+
+    }
+
 
     public BodyResponse countAllActivePigs() {
         BodyResponse response = new BodyResponse();
@@ -165,6 +194,21 @@ public class PigService implements PigServiceInterface {
     // check if pig exists
     private boolean pigExists(long id) {
         return pigRepository.existsById(id);
+    }
+
+    private List<Map<String, Object>> parseGenderCount(List<Object[]> genderCount)  {
+        // Process into JSON
+        List<Map<String, Object>> jsonData = new ArrayList<>();
+        for (Object[] entry : genderCount) {
+            Map<String, Object> mapEntry = new HashMap<>();
+            mapEntry.put(entry[0].toString(), entry[1]);
+
+            jsonData.add(mapEntry);
+        }
+
+        // Convert to JSON string
+
+        return jsonData;
     }
 
     private String generateTag() {

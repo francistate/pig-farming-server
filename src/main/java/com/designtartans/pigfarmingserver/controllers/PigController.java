@@ -44,4 +44,16 @@ public class PigController {
         return new ResponseEntity<>(pigService.countActivePigsPerProvince(), HttpStatus.OK);
     }
 
+    @GetMapping("/pig")
+    @PreAuthorize("hasAuthority('FARMER') || hasAuthority('VET')")
+    public ResponseEntity<BodyResponse> getPigByTag(@RequestParam String tag) throws PigNotFoundException {
+        return new ResponseEntity<>(pigService.getPigByTag(tag), HttpStatus.OK);
+    }
+
+    @GetMapping("/gender-count/farm")
+    @PreAuthorize("hasAuthority('FARMER')")
+    public ResponseEntity<BodyResponse> getPigGenderCountByFarm(@RequestParam Long id) throws FarmNotFoundException {
+        return new ResponseEntity<>(pigService.getPigGenderCountForFarm(id), HttpStatus.OK);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.designtartans.pigfarmingserver.advice;
 
+import com.designtartans.pigfarmingserver.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,14 +10,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
-import com.designtartans.pigfarmingserver.exceptions.ExistingVetShopNameException;
-import com.designtartans.pigfarmingserver.exceptions.FarmNotFoundException;
-import com.designtartans.pigfarmingserver.exceptions.InvalidShopIdException;
-import com.designtartans.pigfarmingserver.exceptions.InvalidTokenException;
-import com.designtartans.pigfarmingserver.exceptions.NoTokenProvidedException;
-import com.designtartans.pigfarmingserver.exceptions.PhoneNumberAlreadyExistException;
-import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
-import com.designtartans.pigfarmingserver.exceptions.TagNotFoundException;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
@@ -159,6 +152,16 @@ public class ApiExceptionHandler {
     public BodyResponse handleNoTokenProvidedException(NoTokenProvidedException ex) {
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        response.setProcessed(false);
+        response.setResult(ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(VetNotFoundException.class)
+    public BodyResponse handleVetNotFoundException(VetNotFoundException ex) {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.BAD_REQUEST);
         response.setProcessed(false);
         response.setResult(ex.getMessage());
         return response;

@@ -11,4 +11,6 @@ public interface PigHealthRecordRepository extends JpaRepository<PigHealthRecord
 
     // @Query("SELECT p FROM PigHealthRecord p WHERE p.pig.id = ?1")
     List<PigHealthRecord> findByPigId(Long pigId);
+
+    List<PigHealthRecord> findByVetId(Long etId);
 }

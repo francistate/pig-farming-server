@@ -1,5 +1,6 @@
 package com.designtartans.pigfarmingserver.dto;
 
+import com.designtartans.pigfarmingserver.model.Pig;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,12 +10,12 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PigHealthRecordDto {
+public class PigHealthRecordReturnDto {
 
 
     private Long id;
 
-    private Long pigId;
+    private Pig pig;
 
     private Long vetId;
 

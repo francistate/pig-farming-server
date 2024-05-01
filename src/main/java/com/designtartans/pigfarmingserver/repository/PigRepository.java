@@ -4,6 +4,7 @@ import com.designtartans.pigfarmingserver.dto.ProvincePigCountDTO;
 import com.designtartans.pigfarmingserver.model.Pig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,5 +21,12 @@ public interface PigRepository extends JpaRepository<Pig, Long> {
 
     @Query("SELECT NEW com.designtartans.pigfarmingserver.dto.ProvincePigCountDTO(COALESCE(p.farm.province, 'UNKNOWN'), COUNT(p)) FROM Pig p WHERE p.pigStatus = com.designtartans.pigfarmingserver.model.PigStatus.ACTIVE GROUP BY COALESCE(p.farm.province, 'UNKNOWN')")
     List<ProvincePigCountDTO> countActivePigsPerProvince();
+
+
+    @Query("SELECT p.gender, COUNT(p) " +
+            "FROM Pig p " +
+            "WHERE p.farm.id = :farmId AND p.pigStatus = com.designtartans.pigfarmingserver.model.PigStatus.ACTIVE  " +
+            "GROUP BY p.gender")
+    List<Object[]> countPigsByGenderForAFarm(@Param("farmId") Long farmId);
 
 }

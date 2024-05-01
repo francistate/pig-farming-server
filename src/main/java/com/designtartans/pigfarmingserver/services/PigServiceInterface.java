@@ -13,4 +13,8 @@ public interface PigServiceInterface {
     BodyResponse countAllActivePigs() ;
 
     BodyResponse countActivePigsPerProvince() ;
+
+    BodyResponse getPigByTag(String tag) throws PigNotFoundException;
+
+    BodyResponse getPigGenderCountForFarm(Long farmId) throws FarmNotFoundException;
 }

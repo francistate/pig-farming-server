@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.designtartans.pigfarmingserver.dto.AuthenticationRequest;
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.FarmerDto;
+import com.designtartans.pigfarmingserver.dto.MinisterDto;
 import com.designtartans.pigfarmingserver.dto.VetDto;
 import com.designtartans.pigfarmingserver.exceptions.InvalidShopIdException;
 import com.designtartans.pigfarmingserver.exceptions.PhoneNumberAlreadyExistException;
 import com.designtartans.pigfarmingserver.services.FarmerServiceInterface;
+import com.designtartans.pigfarmingserver.services.MinisterServiceInterface;
 import com.designtartans.pigfarmingserver.services.UserService;
 import com.designtartans.pigfarmingserver.services.VetServiceInterface;
 
@@ -33,10 +35,19 @@ public class UserController {
     @Autowired
     private VetServiceInterface vetServiceInterface;
 
+    @Autowired
+    private MinisterServiceInterface ministerServiceInterface;
+
     @PostMapping("farmer/signup")
     public ResponseEntity<BodyResponse> createFarmer(@RequestBody FarmerDto farmerDto)
             throws PhoneNumberAlreadyExistException {
         return new ResponseEntity<>(farmerService.createFarmer(farmerDto), HttpStatus.CREATED);
+    }
+
+    @PostMapping("minister/signup")
+    public ResponseEntity<BodyResponse> createMinistry(@RequestBody MinisterDto ministerDto)
+            throws PhoneNumberAlreadyExistException {
+        return new ResponseEntity<>(ministerServiceInterface.createMinister(ministerDto), HttpStatus.CREATED);
     }
 
     @PostMapping("vet/signup")

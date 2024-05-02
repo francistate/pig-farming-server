@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 
@@ -162,6 +163,16 @@ public class ApiExceptionHandler {
     public BodyResponse handleVetNotFoundException(VetNotFoundException ex) {
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.BAD_REQUEST);
+        response.setProcessed(false);
+        response.setResult(ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(NoResourceFoundException.class)
+    public BodyResponse handleResourceNotFoundException(NoResourceFoundException ex) {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.FORBIDDEN);
         response.setProcessed(false);
         response.setResult(ex.getMessage());
         return response;

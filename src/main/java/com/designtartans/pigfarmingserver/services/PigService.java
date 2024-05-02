@@ -12,7 +12,6 @@ import com.designtartans.pigfarmingserver.repository.FarmRepository;
 
 import java.util.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.designtartans.pigfarmingserver.repository.PigRepository;
 import com.designtartans.pigfarmingserver.repository.PigWeightRecordRepository;
@@ -120,8 +119,6 @@ public class PigService implements PigServiceInterface {
         return response;
     }
 
-
-
     BodyResponse getPigById(long pigId) throws PigNotFoundException {
 
         // Retrieve the pig from the database
@@ -162,13 +159,13 @@ public class PigService implements PigServiceInterface {
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.OK);
         response.setProcessed(true);
-//        List<Map<String, Integer>> result = pigRepository.countPigsByGenderForAFarm(farmId);
-//        System.out.println(result.toString());
+        // List<Map<String, Integer>> result =
+        // pigRepository.countPigsByGenderForAFarm(farmId);
+        // System.out.println(result.toString());
         response.setResult(parseGenderCount(pigRepository.countPigsByGenderForAFarm(farmId)));
         return response;
 
     }
-
 
     public BodyResponse countAllActivePigs() {
         BodyResponse response = new BodyResponse();
@@ -196,7 +193,7 @@ public class PigService implements PigServiceInterface {
         return pigRepository.existsById(id);
     }
 
-    private List<Map<String, Object>> parseGenderCount(List<Object[]> genderCount)  {
+    private List<Map<String, Object>> parseGenderCount(List<Object[]> genderCount) {
         // Process into JSON
         List<Map<String, Object>> jsonData = new ArrayList<>();
         for (Object[] entry : genderCount) {

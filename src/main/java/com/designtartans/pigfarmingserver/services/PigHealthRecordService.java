@@ -86,14 +86,10 @@ public class PigHealthRecordService implements PigHealthRecordServiceInterface{
             throw new VetNotFoundException("Vet not found");
         }
 
-//
-//        BodyResponse response = new BodyResponse();
-//        response.setProcessed(true);
-//        response.setResult(pigHealthRecordRepository.findByVetId(vet.getId()));
-//        response.setStatusCode(HttpStatus.OK);
-//        return response;
 
         List<PigHealthRecord> pigHealthRecords = pigHealthRecordRepository.findByVetId(vet.getId());
+        // sort by date, newest record first
+        pigHealthRecords.sort((p1, p2) -> p2.getDate().compareTo(p1.getDate()));
         List<PigHealthRecordReturnDto> pigHealthRecordDtos = mapToPigHealthRecordReturnDtos(pigHealthRecords);
 
         BodyResponse response = new BodyResponse();
@@ -133,10 +129,7 @@ public class PigHealthRecordService implements PigHealthRecordServiceInterface{
 
     private boolean vetExists(long id) {
         Optional<Vet> vet = vetRepository.findById(id);
-        if (vet.isPresent()) {
-            return true;
-        }
-        return false;
+        return vet.isPresent();
     }
 
 }

@@ -159,10 +159,7 @@ public class PigService implements PigServiceInterface {
         BodyResponse response = new BodyResponse();
         response.setStatusCode(HttpStatus.OK);
         response.setProcessed(true);
-        // List<Map<String, Integer>> result =
-        // pigRepository.countPigsByGenderForAFarm(farmId);
-        // System.out.println(result.toString());
-        response.setResult(parseGenderCount(pigRepository.countPigsByGenderForAFarm(farmId)));
+        response.setResult(parseCount(pigRepository.countPigsByGenderForAFarm(farmId)));
         return response;
 
     }
@@ -183,6 +180,27 @@ public class PigService implements PigServiceInterface {
         return response;
     }
 
+    public BodyResponse getBreedCountForFarm(Long farmId) throws FarmNotFoundException {
+        Farm farm = farmRepository.findById(farmId).orElse(null);
+        if (farm == null) {
+            throw new FarmNotFoundException("Farm not found");
+        }
+
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.OK);
+        response.setProcessed(true);
+        response.setResult(parseCount(pigRepository.countPigsByBreedForAFarm(farmId)));
+        return response;
+    }
+
+    public BodyResponse getBreedCountForAllFarmsCombined() {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.OK);
+        response.setProcessed(true);
+        response.setResult(parseCount(pigRepository.countPigsByBreedForAllFarmsCombined()));
+        return response;
+    }
+
     // check if farm exists
     private boolean farmExists(long id) {
         return farmRepository.existsById(id);
@@ -193,7 +211,7 @@ public class PigService implements PigServiceInterface {
         return pigRepository.existsById(id);
     }
 
-    private List<Map<String, Object>> parseGenderCount(List<Object[]> genderCount) {
+    private List<Map<String, Object>> parseCount(List<Object[]> genderCount) {
         // Process into JSON
         List<Map<String, Object>> jsonData = new ArrayList<>();
         for (Object[] entry : genderCount) {
@@ -203,10 +221,21 @@ public class PigService implements PigServiceInterface {
             jsonData.add(mapEntry);
         }
 
-        // Convert to JSON string
+        //sort the list by alphabetical order of the keys
+        Collections.sort(jsonData, new Comparator<Map<String, Object>>() {
+            @Override
+            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+                String key1 = o1.keySet().iterator().next();
+                String key2 = o2.keySet().iterator().next();
+                return key1.compareTo(key2);
+            }
+        });
 
         return jsonData;
     }
+
+
+
 
     private String generateTag() {
         String tagName = "";

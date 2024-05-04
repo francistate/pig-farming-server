@@ -33,13 +33,13 @@ public class PigController {
     }
 
     @GetMapping("/count/active")
-    @PreAuthorize("hasAuthority('FARMER')") // for minister
+    @PreAuthorize("hasAuthority('MINISTER')") // for minister
     public ResponseEntity<BodyResponse> countAllActivePigs() {
         return new ResponseEntity<>(pigService.countAllActivePigs(), HttpStatus.OK);
     }
 
     @GetMapping("/count/active_by_region")
-    @PreAuthorize("hasAuthority('FARMER')") // for minister
+    @PreAuthorize("hasAuthority('MINISTER')") // for minister
     public ResponseEntity<BodyResponse> countActivePigsPerRegion() {
         return new ResponseEntity<>(pigService.countActivePigsPerProvince(), HttpStatus.OK);
     }
@@ -56,4 +56,15 @@ public class PigController {
         return new ResponseEntity<>(pigService.getPigGenderCountForFarm(id), HttpStatus.OK);
     }
 
+    @GetMapping("/breed-count/farm")
+    @PreAuthorize("hasAuthority('FARMER')|| hasAuthority('MINISTER')")
+    public ResponseEntity<BodyResponse> getBreedCountForFarm(@RequestParam Long id) throws FarmNotFoundException {
+        return new ResponseEntity<>(pigService.getBreedCountForFarm(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/breed-count/all")
+    @PreAuthorize("hasAuthority('MINISTER')")
+    public ResponseEntity<BodyResponse> getBreedCountForAllFarmsCombined() {
+        return new ResponseEntity<>(pigService.getBreedCountForAllFarmsCombined(), HttpStatus.OK);
+    }
 }

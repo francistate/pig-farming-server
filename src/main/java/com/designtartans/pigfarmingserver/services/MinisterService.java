@@ -32,7 +32,7 @@ public class MinisterService implements MinisterServiceInterface {
     public BodyResponse createMinister(MinisterDto ministerDto) throws PhoneNumberAlreadyExistException {
         User user = userService.createUser(UserDto.builder().firstname(ministerDto.getFirstname())
                 .lastname(ministerDto.getLastname()).phoneNumber(ministerDto.getPhoneNumber())
-                .password(ministerDto.getPassword()).role("Minister").build());
+                .password(ministerDto.getPassword()).role("MINISTER").build());
         Minister minister = new Minister();
         minister.setUser(user);
         minister.setMinistry(ministerDto.getMinistry());

@@ -221,7 +221,7 @@ public class PigService implements PigServiceInterface {
             jsonData.add(mapEntry);
         }
 
-        //sort the list by alphabetical order of the keys
+        // sort the list by alphabetical order of the keys
         Collections.sort(jsonData, new Comparator<Map<String, Object>>() {
             @Override
             public int compare(Map<String, Object> o1, Map<String, Object> o2) {
@@ -234,8 +234,23 @@ public class PigService implements PigServiceInterface {
         return jsonData;
     }
 
+    public BodyResponse getPigsByProvince(String province) {
+        List<Pig> pigs = pigRepository.findByFarm_Province(province);
+        BodyResponse response = new BodyResponse();
+        response.setProcessed(true);
+        response.setResult(pigs);
+        response.setStatusCode(HttpStatus.OK);
+        return response;
+    }
 
-
+    public BodyResponse getPigsByDistrict(String district) {
+        List<Pig> pigs = pigRepository.findByFarm_District(district);
+        BodyResponse response = new BodyResponse();
+        response.setProcessed(true);
+        response.setResult(pigs);
+        response.setStatusCode(HttpStatus.OK);
+        return response;
+    }
 
     private String generateTag() {
         String tagName = "";

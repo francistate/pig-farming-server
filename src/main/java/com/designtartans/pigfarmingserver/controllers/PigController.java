@@ -3,6 +3,7 @@ package com.designtartans.pigfarmingserver.controllers;
 import com.designtartans.pigfarmingserver.dto.BodyResponse;
 import com.designtartans.pigfarmingserver.dto.PigDto;
 import com.designtartans.pigfarmingserver.exceptions.FarmNotFoundException;
+import com.designtartans.pigfarmingserver.exceptions.InvalidArgumentException;
 import com.designtartans.pigfarmingserver.exceptions.PigNotFoundException;
 import com.designtartans.pigfarmingserver.services.PigServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class PigController {
     }
 
     @GetMapping("/breed-count/farm")
-    @PreAuthorize("hasAuthority('FARMER')|| hasAuthority('MINISTER')")
+    @PreAuthorize("hasAuthority('FARMER') || hasAuthority('MINISTER')")
     public ResponseEntity<BodyResponse> getBreedCountForFarm(@RequestParam Long id) throws FarmNotFoundException {
         return new ResponseEntity<>(pigService.getBreedCountForFarm(id), HttpStatus.OK);
     }
@@ -66,5 +67,18 @@ public class PigController {
     @PreAuthorize("hasAuthority('MINISTER')")
     public ResponseEntity<BodyResponse> getBreedCountForAllFarmsCombined() {
         return new ResponseEntity<>(pigService.getBreedCountForAllFarmsCombined(), HttpStatus.OK);
+    }
+
+    @GetMapping("/location")
+    @PreAuthorize("hasAuthority('MINISTER')")
+    public ResponseEntity<BodyResponse> getPigsCountByLocation(@RequestParam(required = false) String province,
+            @RequestParam(required = false) String district) throws InvalidArgumentException {
+        if (province != null) {
+            return new ResponseEntity<>(pigService.getPigsByProvince(province), HttpStatus.OK);
+        } else if (district != null) {
+            return new ResponseEntity<>(pigService.getPigsByDistrict(district), HttpStatus.OK);
+        } else {
+            throw new InvalidArgumentException("Invalid arguments passed");
+        }
     }
 }

@@ -178,4 +178,14 @@ public class ApiExceptionHandler {
         return response;
     }
 
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(InvalidArgumentException.class)
+    public BodyResponse handleInvalidArgumentException(InvalidArgumentException ex) {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.FORBIDDEN);
+        response.setProcessed(false);
+        response.setResult(ex.getMessage());
+        return response;
+    }
+
 }

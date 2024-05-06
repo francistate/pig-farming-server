@@ -10,9 +10,9 @@ public interface PigServiceInterface {
 
     BodyResponse getPigsByFarm(Long farmId) throws FarmNotFoundException;
 
-    BodyResponse countAllActivePigs() ;
+    BodyResponse countAllActivePigs();
 
-    BodyResponse countActivePigsPerProvince() ;
+    BodyResponse countActivePigsPerProvince();
 
     BodyResponse getPigByTag(String tag) throws PigNotFoundException;
 
@@ -21,4 +21,9 @@ public interface PigServiceInterface {
     BodyResponse getBreedCountForFarm(Long farmId) throws FarmNotFoundException;
 
     BodyResponse getBreedCountForAllFarmsCombined();
+
+    BodyResponse getPigsByDistrict(String district);
+
+    BodyResponse getPigsByProvince(String province);
+
 }

@@ -75,9 +75,9 @@ public class UserService {
         if (user.getRole().equalsIgnoreCase("FARMER")) {
             Farmer farmer = farmerRepository.findByUser(user).get();
             if (farmer.getFarm() == null) {
-                responseBody.put("FarmID", null);
+                responseBody.put("farmID", null);
             } else {
-                responseBody.put("FarmID", farmer.getFarm().getId());
+                responseBody.put("farmID", farmer.getFarm().getId());
             }
 
         } else if (user.getRole().equalsIgnoreCase("VET")) {

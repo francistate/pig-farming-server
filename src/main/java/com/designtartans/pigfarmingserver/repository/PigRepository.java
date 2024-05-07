@@ -37,12 +37,18 @@ public interface PigRepository extends JpaRepository<Pig, Long> {
         List<Object[]> countPigsByBreedForAFarm(@Param("farmId") Long id);
 
         @Query("SELECT p.breed, COUNT(p) " +
-                        "FROM Pig p " +
-                        "WHERE p.pigStatus = com.designtartans.pigfarmingserver.model.PigStatus.ACTIVE  " +
-                        "GROUP BY p.breed")
+                "FROM Pig p " +
+                "WHERE p.pigStatus = com.designtartans.pigfarmingserver.model.PigStatus.ACTIVE  " +
+                "GROUP BY p.breed")
         List<Object[]> countPigsByBreedForAllFarmsCombined();
 
         List<Pig> findByFarm_Province(String province);
 
         List<Pig> findByFarm_District(String district);
+
+        @Query("SELECT p.gender, COUNT(p) " +
+                "FROM Pig p " +
+                "WHERE p.pigStatus = com.designtartans.pigfarmingserver.model.PigStatus.ACTIVE  " +
+                "GROUP BY p.gender")
+        List<Object[]> countPigsByGenderForAllFarmsCombined();
 }

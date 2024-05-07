@@ -57,6 +57,12 @@ public class PigController {
         return new ResponseEntity<>(pigService.getPigGenderCountForFarm(id), HttpStatus.OK);
     }
 
+    @GetMapping("/gender-count/all")
+    @PreAuthorize("hasAuthority('MINISTER')")
+    public ResponseEntity<BodyResponse> getPigGenderCountForAllFarmsCombined() {
+        return new ResponseEntity<>(pigService.getPigGenderCountForAllFarmsCombined(), HttpStatus.OK);
+    }
+
     @GetMapping("/breed-count/farm")
     @PreAuthorize("hasAuthority('FARMER') || hasAuthority('MINISTER')")
     public ResponseEntity<BodyResponse> getBreedCountForFarm(@RequestParam Long id) throws FarmNotFoundException {

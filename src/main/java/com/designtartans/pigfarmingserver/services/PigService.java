@@ -201,6 +201,14 @@ public class PigService implements PigServiceInterface {
         return response;
     }
 
+    public BodyResponse getPigGenderCountForAllFarmsCombined() {
+        BodyResponse response = new BodyResponse();
+        response.setStatusCode(HttpStatus.OK);
+        response.setProcessed(true);
+        response.setResult(parseCount(pigRepository.countPigsByGenderForAllFarmsCombined()));
+        return response;
+    }
+
     // check if farm exists
     private boolean farmExists(long id) {
         return farmRepository.existsById(id);

@@ -26,4 +26,5 @@ public interface PigServiceInterface {
 
     BodyResponse getPigsByProvince(String province);
 
+    BodyResponse getPigGenderCountForAllFarmsCombined();
 }
